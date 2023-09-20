@@ -1,43 +1,56 @@
+// Nicesize caps the maximum unit to EB (Exabyte, max 2^64 bytes)
 package nicesize
 
-import "fmt"
+import (
+	"fmt"
+	"math"
+)
 
-func FormatSizeWithSpacer(size int64, spacer string) string {
-	const KB = 1 << 10
-	const MB = KB << 10
-	const GB = MB << 10
-	const TB = GB << 10
-	const PB = TB << 10
-	const EB = PB << 10
+const (
+	_ = 1 << (10 * iota)
+	KB
+	MB
+	GB
+	TB
+	PB
+	EB
+)
 
+func FormatWithSpacer(size uint64, spacer string) string {
 	st := "B"
 	nicesize := float64(size)
 
 	switch {
+	case size < KB:
+		break
 	case size < MB:
 		st = "KB"
-		nicesize = float64(size) / float64(KB)
+		nicesize = nicesize / KB
 	case size < GB:
 		st = "MB"
-		nicesize = float64(size) / float64(MB)
+		nicesize = nicesize / MB
 	case size < TB:
 		st = "GB"
-		nicesize = float64(size) / float64(GB)
-
+		nicesize = nicesize / GB
 	case size < PB:
 		st = "TB"
-		nicesize = float64(size) / float64(TB)
+		nicesize = nicesize / TB
 	case size < EB:
 		st = "PB"
-		nicesize = float64(size) / float64(PB)
+		nicesize = nicesize / PB
 	case size >= EB:
 		st = "EB"
-		nicesize = float64(size) / float64(EB)
+		nicesize = nicesize / EB
 
 	}
+
+	if math.Mod(nicesize, 1) < 0.01 {
+		return fmt.Sprintf("%.0f%s%s", nicesize, spacer, st)
+	}
+
 	return fmt.Sprintf("%.2f%s%s", nicesize, spacer, st)
 }
 
-func FormatSize(size int64) string {
-	return FormatSizeWithSpacer(size, "")
+func Format(size uint64) string {
+	return FormatWithSpacer(size, "")
 }
