@@ -17,6 +17,7 @@ func Test(t *testing.T) {
 		{5e12, "4.55TB", "4.55 TB"},
 		{5e15, "4.44PB", "4.44 PB"},
 		{5e18, "4.34EB", "4.34 EB"},
+		{8000_000_000_000_000_000, "6.94EB", "6.94 EB"},
 	}
 
 	for _, tt := range testCases {
